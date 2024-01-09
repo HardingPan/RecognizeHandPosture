@@ -30,7 +30,7 @@ public:
 	}
 };
 
-// 八邻接种子算法，并返回每块区域的边缘框
+// 八邻接种子算法
 void Seed_Filling(const cv::Mat& binImg, cv::Mat& labelImg, int& labelNum, int(&ymin)[20], int(&ymax)[20], int(&xmin)[20], int(&xmax)[20])
 {
 	if (binImg.empty() ||
@@ -122,32 +122,42 @@ cv::Mat HandDetect::skinEllipse(const cv::Mat& image) {
     cv::Mat skinCrCbHist = cv::Mat::zeros(256, 256, CV_8U);
     cv::ellipse(skinCrCbHist, cv::Point(113, 155), cv::Size(23, 25), 43, 0, 360, cv::Scalar(255), -1);
     // 转换至YCrCb空间
-    cv::Mat YCrCb;
+    cv::Mat YCrCb, HSV;
     cv::cvtColor(image, YCrCb, cv::COLOR_BGR2YCrCb);
+    cv::cvtColor(image, HSV, cv::COLOR_BGR2HSV);
     // 拆分Cr, Cb
     std::vector<cv::Mat> channels_YCrCb, channels_HSV;
     cv::split(YCrCb, channels_YCrCb);
     cv::Mat Cr = channels_YCrCb[1];
     cv::Mat Cb = channels_YCrCb[2];
-    // 创建皮肤图层
-    cv::Mat image_skin = cv::Mat::zeros(Cr.size(), CV_8U);
-    for (int i = 0; i < Cr.rows; ++i) {
-        for (int j = 0; j < Cr.cols; ++j) {
-            if (skinCrCbHist.at<uchar>(Cr.at<uchar>(i, j), Cb.at<uchar>(i, j)) > 0) {
-                image_skin.at<uchar>(i, j) = 255; // 若不在椭圆区间中
-    }}}
+    cv::split(HSV, channels_HSV);
+    cv::Mat H = channels_HSV[0];
+    // 肤色检测，输出二值图像
+    cv::Mat imageSkin = cv::Mat::zeros(Cr.size(), CV_8U);
+    for (int j = 1; j < Cr.rows - 1; j++){
+        uchar* currentCr = Cr.ptr< uchar>(j);
+        uchar* currentCb = Cb.ptr< uchar>(j);
+        uchar* currentH = H.ptr< uchar>(j);
+        uchar* current = imageSkin.ptr< uchar>(j);
+        for (int i = 1; i < Cb.cols - 1; i++){
+            if ((currentCr[i] >= 135) && (currentCr[i] <= 170) && (currentCb[i] >= 94) && \
+                (currentCb[i] <= 125) && (currentH[i] >= 1) && (currentH[i] <= 23))
+                current[i] = 255;
+            else
+                current[i] = 0;
+    }}
     // 进行一些修补
     cv::Mat element = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(5, 5));
-    cv::erode(image_skin, image_skin, element);
-    cv::dilate(image_skin, image_skin, element);
+    cv::erode(imageSkin, imageSkin, element);
+    cv::dilate(imageSkin, imageSkin, element);
     // 基于标记的分水岭算法
     cv::Mat fg;
-    cv::erode(image_skin, fg, cv::Mat(), cv::Point(-1, -1), 6);	// 六次递归腐蚀
+    cv::erode(imageSkin, fg, cv::Mat(), cv::Point(-1, -1), 6);	// 六次递归腐蚀
     // 识别没有对象的图像像素
     cv::Mat bg;
-    cv::dilate(image_skin, bg, cv::Mat(), cv::Point(-1, -1), 6); // 六次递归膨胀
+    cv::dilate(imageSkin, bg, cv::Mat(), cv::Point(-1, -1), 6); // 六次递归膨胀
     cv::threshold(bg, bg, 1, 128, cv::THRESH_BINARY_INV); // 反转二值阈值化
-    cv::Mat markers(image_skin.size(), CV_8U, cv::Scalar(0));
+    cv::Mat markers(imageSkin.size(), CV_8U, cv::Scalar(0));
     markers = fg + bg; // 显示标记图像
     // 使用分水岭进行分割
     WatershedSegmenter segmenter;
@@ -158,57 +168,37 @@ cv::Mat HandDetect::skinEllipse(const cv::Mat& image) {
     // 8向种子算法，给边框做标记
     cv::Mat labelImg;
     int label, ymin[20], ymax[20], xmin[20], xmax[20];
+    // 对waterShed进行八邻接种子算法填充
     Seed_Filling(waterShed, labelImg, label, ymin, ymax, xmin, xmax);
-    // 统计一下区域中的肤色区域比例
-    float fuseratio[20];
-    for (int k = 0; k < label; k++){
-        fuseratio[k] = 1;
-        if (((xmax[k] - xmin[k] + 1) > 50) && ((xmax[k] - xmin[k] + 1) < 300) && \
-        ((ymax[k] - ymin[k] + 1) > 150) && ((ymax[k] - ymin[k] + 1) < 450)){
-            int fusepoint = 0;
-            for (int j = ymin[k]; j < ymax[k]; j++){
-                uchar* current = waterShed.ptr< uchar>(j);
-                for (int i = xmin[k]; i < xmax[k]; i++){
-                    if (current[i] == 255)
-                        fusepoint++;
-            }}
-            fuseratio[k] = float(fusepoint) / ((xmax[k] - xmin[k] + 1) * (ymax[k] - ymin[k] + 1));
-    }}
-    cv::Size dsize = cv::Size(108, 128);
-    // 给符合阈值条件的位置画框
-    for (int i = 0; i < label; i++){
-        if ((fuseratio[i] < 0.58)){
-            cv::Mat rROI = cv::Mat(dsize, CV_8UC1); // 尺度调整
-            cv::resize(waterShed(cv::Rect(xmin[i], ymin[i], xmax[i] - xmin[i], ymax[i] - ymin[i])), \
-                        rROI, dsize);
-            return rROI;
-    }}
-    // // 提取最大轮廓
-    // std::vector<cv::Point> largestContour = extractLargestContour(image_skin);
-    // std::vector<std::vector<cv::Point>> contours = {largestContour};
+    // cv::threshold(waterShed, waterShed, 1, 128, cv::THRESH_BINARY_INV);
+    // 提取最大轮廓
+    std::vector<cv::Point> largestContour = extractLargestContour(waterShed);
+    std::vector<std::vector<cv::Point>> contours = {largestContour};
     // if (!largestContour.empty()) {
     //     cv::drawContours(image, contours, 0, cv::Scalar(0, 255, 0), 2);
     // } else {
     //     std::cout << "can't find hand posture" << std::endl;
     // }
-    
-    return image_skin;
+
+    return waterShed;
 }
 
-std::vector<cv::Point> HandDetect::extractLargestContour(const cv::Mat& inputImage){
+std::vector<cv::Point> HandDetect::extractLargestContour(const cv::Mat& inputImage) {
     std::vector<std::vector<cv::Point>> contours;
     cv::findContours(inputImage, contours, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_SIMPLE);
-    // 找到最大轮廓
-    int largestContourIndex = -1;
-    double largestArea = 0.0;
+    // 找到最大闭合轮廓
+    int largestClosedContourIndex = -1;
+    double largestClosedArea = 0.0;
     for (size_t i = 0; i < contours.size(); ++i) {
-        double area = cv::contourArea(contours[i]);
-        if (area > largestArea) {
-            largestArea = area;
-            largestContourIndex = i;
-    }}
-    if (largestContourIndex != -1) {
-        return contours[largestContourIndex];
+        // 检查轮廓是否是闭合的
+        if (cv::isContourConvex(contours[i])) {
+            double area = cv::contourArea(contours[i]);
+            if (area > largestClosedArea) {
+                largestClosedArea = area;
+                largestClosedContourIndex = i;
+    }}}
+    if (largestClosedContourIndex != -1) {
+        return contours[largestClosedContourIndex];
     }
     return {};
 }
