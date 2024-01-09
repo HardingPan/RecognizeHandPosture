@@ -2,17 +2,18 @@
 #define HAND_DETECT_H
 
 #include <opencv2/opencv.hpp>
+#include <stack>
 
 class HandDetect {
 public:
     HandDetect();
     cv::Mat crop();
     cv::Mat skinEllipse(const cv::Mat& image);
-    cv::Mat skinThreshold();
     cv::Mat getHand();
+    std::vector<cv::Point> extractLargestContour(const cv::Mat& inputImage);
 
 private:
     cv::Mat image;
 };
 
-#endif // HAND_DETECT_H
+#endif

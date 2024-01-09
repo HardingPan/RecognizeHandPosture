@@ -338,4 +338,5 @@ CMakeFiles/hand_detection.dir/main.cpp.o: \
  /home/harding/miniconda3/envs/dl/include/opencv4/opencv2/stitching/detail/camera.hpp \
  /home/harding/miniconda3/envs/dl/include/opencv4/opencv2/video.hpp \
  /home/harding/miniconda3/envs/dl/include/opencv4/opencv2/video/tracking.hpp \
- /home/harding/miniconda3/envs/dl/include/opencv4/opencv2/video/background_segm.hpp
+ /home/harding/miniconda3/envs/dl/include/opencv4/opencv2/video/background_segm.hpp \
+ /usr/include/c++/11/stack /usr/include/c++/11/bits/stl_stack.h

@@ -396,7 +396,9 @@ CMakeFiles/hand_detection.dir/main.cpp.o: ../main.cpp \
   /home/harding/miniconda3/envs/dl/include/opencv4/opencv2/stitching/detail/camera.hpp \
   /home/harding/miniconda3/envs/dl/include/opencv4/opencv2/video.hpp \
   /home/harding/miniconda3/envs/dl/include/opencv4/opencv2/video/tracking.hpp \
-  /home/harding/miniconda3/envs/dl/include/opencv4/opencv2/video/background_segm.hpp
+  /home/harding/miniconda3/envs/dl/include/opencv4/opencv2/video/background_segm.hpp \
+  /usr/include/c++/11/stack \
+  /usr/include/c++/11/bits/stl_stack.h
 
 CMakeFiles/hand_detection.dir/src/detect_hand.cpp.o: ../src/detect_hand.cpp \
   /usr/include/stdc-predef.h \
@@ -793,10 +795,16 @@ CMakeFiles/hand_detection.dir/src/detect_hand.cpp.o: ../src/detect_hand.cpp \
   /home/harding/miniconda3/envs/dl/include/opencv4/opencv2/stitching/detail/camera.hpp \
   /home/harding/miniconda3/envs/dl/include/opencv4/opencv2/video.hpp \
   /home/harding/miniconda3/envs/dl/include/opencv4/opencv2/video/tracking.hpp \
-  /home/harding/miniconda3/envs/dl/include/opencv4/opencv2/video/background_segm.hpp
+  /home/harding/miniconda3/envs/dl/include/opencv4/opencv2/video/background_segm.hpp \
+  /usr/include/c++/11/stack \
+  /usr/include/c++/11/bits/stl_stack.h
 
 
 ../src/detect_hand.cpp:
+
+/usr/include/c++/11/bits/stl_stack.h:
+
+/usr/include/c++/11/stack:
 
 /home/harding/miniconda3/envs/dl/include/opencv4/opencv2/video/tracking.hpp:
 
