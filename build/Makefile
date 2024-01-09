@@ -177,6 +177,30 @@ src/detect_hand.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/hand_detection.dir/build.make CMakeFiles/hand_detection.dir/src/detect_hand.cpp.s
 .PHONY : src/detect_hand.cpp.s
 
+src/fourier_descriptor.o: src/fourier_descriptor.cpp.o
+.PHONY : src/fourier_descriptor.o
+
+# target to build an object file
+src/fourier_descriptor.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/hand_detection.dir/build.make CMakeFiles/hand_detection.dir/src/fourier_descriptor.cpp.o
+.PHONY : src/fourier_descriptor.cpp.o
+
+src/fourier_descriptor.i: src/fourier_descriptor.cpp.i
+.PHONY : src/fourier_descriptor.i
+
+# target to preprocess a source file
+src/fourier_descriptor.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/hand_detection.dir/build.make CMakeFiles/hand_detection.dir/src/fourier_descriptor.cpp.i
+.PHONY : src/fourier_descriptor.cpp.i
+
+src/fourier_descriptor.s: src/fourier_descriptor.cpp.s
+.PHONY : src/fourier_descriptor.s
+
+# target to generate assembly for a file
+src/fourier_descriptor.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/hand_detection.dir/build.make CMakeFiles/hand_detection.dir/src/fourier_descriptor.cpp.s
+.PHONY : src/fourier_descriptor.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -192,6 +216,9 @@ help:
 	@echo "... src/detect_hand.o"
 	@echo "... src/detect_hand.i"
 	@echo "... src/detect_hand.s"
+	@echo "... src/fourier_descriptor.o"
+	@echo "... src/fourier_descriptor.i"
+	@echo "... src/fourier_descriptor.s"
 .PHONY : help
 
 

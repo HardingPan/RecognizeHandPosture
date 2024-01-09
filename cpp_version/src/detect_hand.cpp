@@ -113,10 +113,6 @@ void Seed_Filling(const cv::Mat& binImg, cv::Mat& labelImg, int& labelNum, int(&
 HandDetect::HandDetect() {
 }
 
-cv::Mat HandDetect::crop() {
-    // 实现 crop 函数
-}
-
 cv::Mat HandDetect::skinEllipse(const cv::Mat& image) {
     // 创建椭圆mask
     cv::Mat skinCrCbHist = cv::Mat::zeros(256, 256, CV_8U);
@@ -170,15 +166,8 @@ cv::Mat HandDetect::skinEllipse(const cv::Mat& image) {
     int label, ymin[20], ymax[20], xmin[20], xmax[20];
     // 对waterShed进行八邻接种子算法填充
     Seed_Filling(waterShed, labelImg, label, ymin, ymax, xmin, xmax);
-    // cv::threshold(waterShed, waterShed, 1, 128, cv::THRESH_BINARY_INV);
-    // 提取最大轮廓
-    std::vector<cv::Point> largestContour = extractLargestContour(waterShed);
-    std::vector<std::vector<cv::Point>> contours = {largestContour};
-    // if (!largestContour.empty()) {
-    //     cv::drawContours(image, contours, 0, cv::Scalar(0, 255, 0), 2);
-    // } else {
-    //     std::cout << "can't find hand posture" << std::endl;
-    // }
+    int thresholdValue = 128;
+    cv::threshold(waterShed, waterShed, thresholdValue, 255, cv::THRESH_BINARY);
 
     return waterShed;
 }
@@ -186,24 +175,28 @@ cv::Mat HandDetect::skinEllipse(const cv::Mat& image) {
 std::vector<cv::Point> HandDetect::extractLargestContour(const cv::Mat& inputImage) {
     std::vector<std::vector<cv::Point>> contours;
     cv::findContours(inputImage, contours, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_SIMPLE);
-    // 找到最大闭合轮廓
+    // 找到最大轮廓
     int largestClosedContourIndex = -1;
     double largestClosedArea = 0.0;
     for (size_t i = 0; i < contours.size(); ++i) {
-        // 检查轮廓是否是闭合的
-        if (cv::isContourConvex(contours[i])) {
-            double area = cv::contourArea(contours[i]);
-            if (area > largestClosedArea) {
-                largestClosedArea = area;
-                largestClosedContourIndex = i;
-    }}}
+        double area = cv::contourArea(contours[i]);
+        if (area > largestClosedArea) {
+            largestClosedArea = area;
+            largestClosedContourIndex = i;
+    }}
     if (largestClosedContourIndex != -1) {
         return contours[largestClosedContourIndex];
     }
     return {};
 }
 
-
-cv::Mat HandDetect::getHand() {
-    // 实现 getHand 函数
+cv::Mat HandDetect::getHand(const cv::Mat& image){
+    cv::Mat imageOut = skinEllipse(image);
+    cv::Mat imageHand = cv::Mat::zeros(imageOut.size(), CV_8U);
+    std::vector<cv::Point> largestContour = extractLargestContour(imageOut);
+    std::vector<std::vector<cv::Point>> contours = {largestContour};
+    if (!largestContour.empty()) {
+        cv::drawContours(imageHand, contours, 0, 255, 2);
+    }
+    return imageHand;
 }

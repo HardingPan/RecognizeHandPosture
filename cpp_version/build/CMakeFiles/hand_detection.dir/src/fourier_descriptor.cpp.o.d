@@ -1,7 +1,7 @@
-CMakeFiles/hand_detection.dir/main.cpp.o: \
- /home/harding/RecognizeHandPosture/cpp_version/main.cpp \
+CMakeFiles/hand_detection.dir/src/fourier_descriptor.cpp.o: \
+ /home/harding/RecognizeHandPosture/cpp_version/src/fourier_descriptor.cpp \
  /usr/include/stdc-predef.h \
- /home/harding/RecognizeHandPosture/cpp_version/include/detect_hand.h \
+ /home/harding/RecognizeHandPosture/cpp_version/include/fourier_descriptor.h \
  /home/harding/miniconda3/envs/dl/include/opencv4/opencv2/opencv.hpp \
  /home/harding/miniconda3/envs/dl/include/opencv4/opencv2/opencv_modules.hpp \
  /home/harding/miniconda3/envs/dl/include/opencv4/opencv2/core.hpp \
@@ -339,8 +339,6 @@ CMakeFiles/hand_detection.dir/main.cpp.o: \
  /home/harding/miniconda3/envs/dl/include/opencv4/opencv2/video.hpp \
  /home/harding/miniconda3/envs/dl/include/opencv4/opencv2/video/tracking.hpp \
  /home/harding/miniconda3/envs/dl/include/opencv4/opencv2/video/background_segm.hpp \
- /usr/include/c++/11/stack /usr/include/c++/11/bits/stl_stack.h \
- /home/harding/RecognizeHandPosture/cpp_version/include/fourier_descriptor.h \
  /home/harding/miniconda3/envs/dl/include/opencv4/opencv2/core/core.hpp \
  /home/harding/miniconda3/envs/dl/include/opencv4/opencv2/highgui/highgui.hpp \
  /home/harding/miniconda3/envs/dl/include/opencv4/opencv2/imgproc/imgproc.hpp

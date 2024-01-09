@@ -10,6 +10,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
   "/home/harding/RecognizeHandPosture/cpp_version/main.cpp" "CMakeFiles/hand_detection.dir/main.cpp.o" "gcc" "CMakeFiles/hand_detection.dir/main.cpp.o.d"
   "/home/harding/RecognizeHandPosture/cpp_version/src/detect_hand.cpp" "CMakeFiles/hand_detection.dir/src/detect_hand.cpp.o" "gcc" "CMakeFiles/hand_detection.dir/src/detect_hand.cpp.o.d"
+  "/home/harding/RecognizeHandPosture/cpp_version/src/fourier_descriptor.cpp" "CMakeFiles/hand_detection.dir/src/fourier_descriptor.cpp.o" "gcc" "CMakeFiles/hand_detection.dir/src/fourier_descriptor.cpp.o.d"
   )
 
 # Targets to which this target links.

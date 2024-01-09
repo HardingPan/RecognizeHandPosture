@@ -1,4 +1,5 @@
 #include "include/detect_hand.h"
+#include "include/fourier_descriptor.h"
 
 void InitText(){
     std::cout << "\n 欢迎使用基于图像处理和机器学习的手势识别系统" << std::endl;
@@ -10,6 +11,7 @@ int main(int argc, char** argv){
     InitText();
     cv::VideoCapture cap(-1);
     HandDetect detector;
+    FourierDescriptors fourier_descriptor;
     cv::Mat image;
     // 设置字体
     std::string text;
@@ -29,15 +31,20 @@ int main(int argc, char** argv){
         clock_t startTimeStamp, finishTimeStamp;
         cap >> image;
         startTimeStamp = clock();
-        cv::Mat image_out = detector.skinEllipse(image);
-        cv::cvtColor(image_out, image_out, cv::COLOR_GRAY2BGR);
+        
+        cv::Mat imageHand = detector.getHand(image);
+        // std::vector<double> descriptors = fourier_descriptor.calculate(imageHand);
+        std::vector<double> descriptors = fourier_descriptor.GetAndTruncateDescriptors(imageHand, 100);
+        int descriptorLength = descriptors.size();
+        std::cout << descriptorLength << std::endl;
+        cv::cvtColor(imageHand, imageHand, cv::COLOR_GRAY2BGR);
         // 确保两个图像具有相同的行数并拼接
-        if (image.rows != image_out.rows) {
+        if (image.rows != imageHand.rows) {
             std::cerr << "Error: Images must have the same number of rows." << std::endl;
             return -1;
         }
         cv::Mat combinedImage;
-        cv::hconcat(image, image_out, combinedImage);
+        cv::hconcat(image, imageHand, combinedImage);
         
         finishTimeStamp = clock();
         text = "FPS: " + std::to_string((double)CLOCKS_PER_SEC / (finishTimeStamp - startTimeStamp));

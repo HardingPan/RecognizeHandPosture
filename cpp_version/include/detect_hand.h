@@ -7,9 +7,8 @@
 class HandDetect {
 public:
     HandDetect();
-    cv::Mat crop();
     cv::Mat skinEllipse(const cv::Mat& image);
-    cv::Mat getHand();
+    cv::Mat getHand(const cv::Mat& image);
     std::vector<cv::Point> extractLargestContour(const cv::Mat& inputImage);
 
 private:

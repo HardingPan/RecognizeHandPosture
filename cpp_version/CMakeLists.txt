@@ -19,6 +19,7 @@ add_executable(
     hand_detection
     main.cpp
     src/detect_hand.cpp
+    src/fourier_descriptor.cpp
 )
 
 # 链接 OpenCV 库
