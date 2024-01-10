@@ -23,10 +23,17 @@ std::vector<double> FourierDescriptors::calculate(const cv::Mat& image) {
     if (!magnitudeImage.isContinuous()) {
         magnitudeImage = magnitudeImage.clone();
     }
-
     // 将描述子展平为一维数组
     std::vector<double> flatDescriptor;
     magnitudeImage.reshape(0, 1).copyTo(flatDescriptor);
+    // 归一化描述子
+    cv::Scalar mean, stdDev;
+    cv::meanStdDev(flatDescriptor, mean, stdDev);
+    double meanValue = mean.val[0];
+    double stdDevValue = stdDev.val[0];
+    for (double& value : flatDescriptor) {
+        value = (value - meanValue) / stdDevValue;
+    }
 
     return flatDescriptor;
 }

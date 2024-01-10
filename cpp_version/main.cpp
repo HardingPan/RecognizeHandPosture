@@ -10,6 +10,9 @@ void InitText(){
 int main(int argc, char** argv){
     InitText();
     cv::VideoCapture cap(-1);
+    cap.set(cv::CAP_PROP_FRAME_WIDTH, 640);
+    cap.set(cv::CAP_PROP_FRAME_HEIGHT, 480);
+
     HandDetect detector;
     FourierDescriptors fourier_descriptor;
     cv::Mat image;
