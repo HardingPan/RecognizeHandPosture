@@ -1,3 +1,0 @@
-/home/harding/RecognizeHandPosture/cpp_version/build/CMakeFiles/hand_detection.dir
-/home/harding/RecognizeHandPosture/cpp_version/build/CMakeFiles/edit_cache.dir
-/home/harding/RecognizeHandPosture/cpp_version/build/CMakeFiles/rebuild_cache.dir
